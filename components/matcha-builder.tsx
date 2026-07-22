@@ -70,17 +70,18 @@ type StepMeta = {
   title: string
   jp: string
   accent: Accent
+  emoji: string
 }
 
 const steps: StepMeta[] = [
-  { key: 'base', title: 'Elige tu base', jp: 'ベース', accent: 'sakura' },
-  { key: 'size', title: 'Tamaño', jp: 'サイズ', accent: 'sakura' },
-  { key: 'milk', title: 'Tipo de leche', jp: 'ミルク', accent: 'sakura' },
-  { key: 'foam', title: 'Foam', jp: 'フォーム', accent: 'sakura' },
-  { key: 'sweet', title: 'Nivel de dulzor', jp: '甘さ', accent: 'sakura' },
-  { key: 'extras', title: 'Extras', jp: 'トッピング', accent: 'sakura' },
-  { key: 'delivery', title: '¿Cómo lo quieres?', jp: 'お届け', accent: 'sakura' },
-  { key: 'review', title: 'Revisa tu pedido', jp: 'ご注文', accent: 'sakura' },
+  { key: 'base', title: 'Elige tu base', jp: 'ベース', accent: 'sakura', emoji: '🌿' },
+  { key: 'size', title: 'Tamaño', jp: 'サイズ', accent: 'sakura', emoji: '🥤' },
+  { key: 'milk', title: 'Tipo de leche', jp: 'ミルク', accent: 'sakura', emoji: '🥛' },
+  { key: 'foam', title: 'Foam', jp: 'フォーム', accent: 'sakura', emoji: '☁️' },
+  { key: 'sweet', title: 'Nivel de dulzor', jp: '甘さ', accent: 'sakura', emoji: '🍯' },
+  { key: 'extras', title: 'Extras', jp: 'トッピング', accent: 'sakura', emoji: '✨' },
+  { key: 'delivery', title: '¿Cómo lo quieres?', jp: 'お届け', accent: 'sakura', emoji: '📍' },
+  { key: 'review', title: 'Revisa tu pedido', jp: 'ご注文', accent: 'sakura', emoji: '🧾' },
 ]
 
 function OptionCard({
@@ -345,7 +346,8 @@ export function MatchaBuilder() {
             <p className="text-xs font-medium uppercase tracking-widest text-muted-foreground">
               Paso {step + 1} de {steps.length}
             </p>
-            <h3 className="text-lg font-semibold text-foreground">
+            <h3 className="flex items-center gap-1.5 text-lg font-semibold text-foreground">
+              <span aria-hidden="true">{meta.emoji}</span>
               {meta.title}
             </h3>
           </div>
@@ -360,21 +362,6 @@ export function MatchaBuilder() {
             className={`h-full rounded-full ${accent.bar} transition-all duration-500 ease-out`}
             style={{ width: `${progress}%` }}
           />
-        </div>
-
-        {/* Step dots */}
-        <div className="mt-3 flex items-center gap-1.5">
-          {steps.map((s, i) => (
-            <button
-              key={s.key}
-              type="button"
-              aria-label={`Ir a ${s.title}`}
-              onClick={() => setStep(i)}
-              className={`h-1.5 flex-1 rounded-full transition-colors ${
-                i <= step ? accent.bar : 'bg-border'
-              }`}
-            />
-          ))}
         </div>
       </div>
 
@@ -444,10 +431,11 @@ export function MatchaBuilder() {
                 type="button"
                 onClick={() => pickAndAdvance(setSweetId, s.id)}
                 aria-pressed={sweetId === s.id}
-                className={`rounded-full border-2 px-5 py-2.5 text-sm font-medium text-foreground transition-all hover:-translate-y-0.5 ${
+                className={`flex items-center gap-1.5 rounded-full border-2 px-5 py-2.5 text-sm font-medium text-foreground transition-all hover:-translate-y-0.5 ${
                   sweetId === s.id ? accent.selected : accent.unselected
                 }`}
               >
+                {s.emoji ? <span aria-hidden="true">{s.emoji}</span> : null}
                 {s.label}
               </button>
             ))}
@@ -485,7 +473,7 @@ export function MatchaBuilder() {
                 }`}
               >
                 <span className="block text-sm font-semibold text-foreground">
-                  Recoger en tienda
+                  🛍️ Recoger en tienda
                 </span>
                 <span className="mt-1 block text-xs text-muted-foreground">
                   Gratis · listo en ~15 min
@@ -500,7 +488,7 @@ export function MatchaBuilder() {
                 }`}
               >
                 <span className="block text-sm font-semibold text-foreground">
-                  A domicilio
+                  🚲 A domicilio
                 </span>
                 <span className="mt-1 block text-xs text-muted-foreground">
                   +${DELIVERY_FEE} · 30–45 min
