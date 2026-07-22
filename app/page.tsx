@@ -25,11 +25,7 @@ export default function Page() {
       <footer className="border-t border-border py-10 text-center">
         <p className="font-serif text-3xl text-primary">抹茶</p>
         <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-          Kaze Matcha · 12 Yanaka Lane · Abierto todos los días, 8am–8pm
-        </p>
-        <p className="mt-1 text-xs text-muted-foreground">
-          Ingredientes ceremoniales de Uji, Kioto. Avísanos de cualquier
-          alergia.
+          Simple. Pure. Delicious.
         </p>
       </footer>
     </main>
