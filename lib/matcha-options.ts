@@ -4,6 +4,7 @@ export type Option = {
   jp?: string
   price: number
   note?: string
+  emoji?: string
 }
 
 export const bases: Option[] = [
@@ -20,12 +21,12 @@ export const sizes: Option[] = [
 ]
 
 export const milks: Option[] = [
-  { id: 'entera', label: 'Leche entera', jp: '牛乳', price: 0 },
-  { id: 'deslactosada', label: 'Deslactosada', jp: '無乳糖', price: 0 },
-  { id: 'almendra', label: 'Almendra', jp: 'アーモンド', price: 10 },
-  { id: 'avena', label: 'Avena', jp: 'オーツ', price: 10 },
-  { id: 'coco', label: 'Coco', jp: 'ココナッツ', price: 10 },
-  { id: 'soya', label: 'Soya', jp: '豆乳', price: 8 },
+  { id: 'entera', label: 'Leche entera', jp: '牛乳', price: 0, emoji: '🥛' },
+  { id: 'deslactosada', label: 'Deslactosada', jp: '無乳糖', price: 0, emoji: '🥛' },
+  { id: 'almendra', label: 'Almendra', jp: 'アーモンド', price: 10, emoji: '🌰' },
+  { id: 'avena', label: 'Avena', jp: 'オーツ', price: 10, emoji: '🌾' },
+  { id: 'coco', label: 'Coco', jp: 'ココナッツ', price: 10, emoji: '🥥' },
+  { id: 'soya', label: 'Soya', jp: '豆乳', price: 8, emoji: '🌱' },
 ]
 
 export const foams: Option[] = [

@@ -114,7 +114,10 @@ function OptionCard({
         </span>
       ) : null}
       <span className="flex w-full items-baseline justify-between gap-2">
-        <span className="text-sm font-semibold text-foreground">
+        <span className="flex items-center gap-1.5 text-sm font-semibold text-foreground">
+          {option.emoji ? (
+            <span className="text-base leading-none">{option.emoji}</span>
+          ) : null}
           {option.label}
         </span>
         {option.jp ? (
@@ -125,9 +128,13 @@ function OptionCard({
       </span>
       <span className="mt-1.5 flex w-full items-center justify-between text-xs text-muted-foreground">
         <span>{option.note ?? ''}</span>
-        <span className="font-medium">
-          {option.price > 0 ? `+$${option.price}` : ''}
-        </span>
+        {option.price > 0 ? (
+          <span className="font-medium">{`+$${option.price}`}</span>
+        ) : (
+          <span className="flex items-center gap-1 font-semibold text-matcha">
+            <span aria-hidden="true">✓</span> Incluido
+          </span>
+        )}
       </span>
     </button>
   )
@@ -176,6 +183,7 @@ export function MatchaBuilder() {
   const meta = steps[step]
   const accent = accentTheme[meta.accent]
   const isLast = step === steps.length - 1
+  const progress = Math.round(((step + 1) / steps.length) * 100)
   const canOrder =
     name.trim().length > 0 &&
     (delivery === 'pickup' || address.trim().length > 5)
@@ -333,7 +341,7 @@ export function MatchaBuilder() {
           >
             {meta.jp}
           </span>
-          <div>
+          <div className="flex-1">
             <p className="text-xs font-medium uppercase tracking-widest text-muted-foreground">
               Paso {step + 1} de {steps.length}
             </p>
@@ -341,10 +349,21 @@ export function MatchaBuilder() {
               {meta.title}
             </h3>
           </div>
+          <span className="shrink-0 font-serif text-2xl font-semibold text-sakura-foreground tabular-nums">
+            {progress}%
+          </span>
+        </div>
+
+        {/* Continuous progress bar */}
+        <div className="mt-4 h-2 w-full overflow-hidden rounded-full bg-border/60">
+          <div
+            className={`h-full rounded-full ${accent.bar} transition-all duration-500 ease-out`}
+            style={{ width: `${progress}%` }}
+          />
         </div>
 
         {/* Step dots */}
-        <div className="mt-5 flex items-center gap-1.5">
+        <div className="mt-3 flex items-center gap-1.5">
           {steps.map((s, i) => (
             <button
               key={s.key}
