@@ -20,6 +20,7 @@ const accentTheme: Record<
   {
     badge: string
     selected: string
+    unselected: string
     chip: string
     bar: string
     button: string
@@ -29,6 +30,7 @@ const accentTheme: Record<
   matcha: {
     badge: 'bg-matcha text-matcha-foreground',
     selected: 'border-matcha bg-matcha/15 ring-2 ring-matcha',
+    unselected: 'border-matcha/30 bg-matcha/5 hover:border-matcha/60',
     chip: 'bg-matcha/15 text-matcha',
     bar: 'bg-matcha',
     button: 'bg-matcha text-matcha-foreground',
@@ -37,6 +39,7 @@ const accentTheme: Record<
   sakura: {
     badge: 'bg-sakura text-sakura-foreground',
     selected: 'border-sakura bg-sakura/25 ring-2 ring-sakura',
+    unselected: 'border-sakura/35 bg-sakura/10 hover:border-sakura/70',
     chip: 'bg-sakura/30 text-sakura-foreground',
     bar: 'bg-sakura',
     button: 'bg-sakura text-sakura-foreground',
@@ -45,6 +48,7 @@ const accentTheme: Record<
   indigo: {
     badge: 'bg-indigo text-indigo-foreground',
     selected: 'border-indigo bg-indigo/15 ring-2 ring-indigo',
+    unselected: 'border-indigo/30 bg-indigo/5 hover:border-indigo/60',
     chip: 'bg-indigo/15 text-indigo',
     bar: 'bg-indigo',
     button: 'bg-indigo text-indigo-foreground',
@@ -53,6 +57,7 @@ const accentTheme: Record<
   gold: {
     badge: 'bg-gold text-gold-foreground',
     selected: 'border-gold bg-gold/30 ring-2 ring-gold',
+    unselected: 'border-gold/35 bg-gold/10 hover:border-gold/70',
     chip: 'bg-gold/30 text-gold-foreground',
     bar: 'bg-gold',
     button: 'bg-gold text-gold-foreground',
@@ -97,8 +102,8 @@ function OptionCard({
       data-selected={selected}
       className={`option-card relative flex flex-col items-start rounded-xl border-2 p-4 pr-8 text-left ${
         selected
-          ? `${accentTheme[accent].selected}`
-          : 'border-border bg-card hover:border-foreground/20'
+          ? accentTheme[accent].selected
+          : accentTheme[accent].unselected
       }`}
     >
       {selected ? (
@@ -420,10 +425,8 @@ export function MatchaBuilder() {
                 type="button"
                 onClick={() => pickAndAdvance(setSweetId, s.id)}
                 aria-pressed={sweetId === s.id}
-                className={`rounded-full border-2 px-5 py-2.5 text-sm font-medium transition-all hover:-translate-y-0.5 ${
-                  sweetId === s.id
-                    ? accent.selected
-                    : 'border-border bg-card text-foreground hover:border-foreground/20'
+                className={`rounded-full border-2 px-5 py-2.5 text-sm font-medium text-foreground transition-all hover:-translate-y-0.5 ${
+                  sweetId === s.id ? accent.selected : accent.unselected
                 }`}
               >
                 {s.label}
@@ -459,9 +462,7 @@ export function MatchaBuilder() {
                 onClick={() => setDelivery('pickup')}
                 aria-pressed={delivery === 'pickup'}
                 className={`rounded-xl border-2 p-4 text-left transition-all hover:-translate-y-0.5 ${
-                  delivery === 'pickup'
-                    ? accent.selected
-                    : 'border-border bg-card hover:border-foreground/20'
+                  delivery === 'pickup' ? accent.selected : accent.unselected
                 }`}
               >
                 <span className="block text-sm font-semibold text-foreground">
@@ -476,9 +477,7 @@ export function MatchaBuilder() {
                 onClick={() => setDelivery('domicilio')}
                 aria-pressed={delivery === 'domicilio'}
                 className={`rounded-xl border-2 p-4 text-left transition-all hover:-translate-y-0.5 ${
-                  delivery === 'domicilio'
-                    ? accent.selected
-                    : 'border-border bg-card hover:border-foreground/20'
+                  delivery === 'domicilio' ? accent.selected : accent.unselected
                 }`}
               >
                 <span className="block text-sm font-semibold text-foreground">
