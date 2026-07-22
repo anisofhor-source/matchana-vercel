@@ -5,17 +5,17 @@ export function MenuHero() {
     <header className="relative overflow-hidden border-b border-border">
       <div className="absolute inset-0 scale-105">
         <Image
-          src="/images/hero-matcha-powder.webp"
-          alt="Palabra MATCHA escrita sobre matcha en polvo"
+          src="/images/hero-matcha.jpg"
+          alt="Bol de matcha en polvo, chasen de bambú y tazón de matcha batido sobre bandeja de cobre"
           fill
           priority
-          className="object-cover object-center"
+          className="object-cover"
         />
         <div
           className="absolute inset-0"
           style={{
             background:
-              'radial-gradient(120% 90% at 50% 12%, oklch(0.2 0.05 152 / 0.45), transparent 60%), linear-gradient(180deg, oklch(0.16 0.03 152 / 0.62) 0%, oklch(0.14 0.03 152 / 0.78) 100%)',
+              'radial-gradient(120% 90% at 50% 12%, oklch(0.2 0.02 60 / 0.28), transparent 60%), linear-gradient(180deg, oklch(0.18 0.02 50 / 0.5) 0%, oklch(0.16 0.02 50 / 0.66) 100%)',
           }}
         />
       </div>
