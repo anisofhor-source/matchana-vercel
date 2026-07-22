@@ -73,14 +73,14 @@ type StepMeta = {
 }
 
 const steps: StepMeta[] = [
-  { key: 'base', title: 'Elige tu base', jp: 'ベース', accent: 'matcha' },
-  { key: 'size', title: 'Tamaño', jp: 'サイズ', accent: 'indigo' },
+  { key: 'base', title: 'Elige tu base', jp: 'ベース', accent: 'sakura' },
+  { key: 'size', title: 'Tamaño', jp: 'サイズ', accent: 'sakura' },
   { key: 'milk', title: 'Tipo de leche', jp: 'ミルク', accent: 'sakura' },
-  { key: 'foam', title: 'Foam', jp: 'フォーム', accent: 'gold' },
-  { key: 'sweet', title: 'Nivel de dulzor', jp: '甘さ', accent: 'matcha' },
-  { key: 'extras', title: 'Extras', jp: 'トッピング', accent: 'indigo' },
+  { key: 'foam', title: 'Foam', jp: 'フォーム', accent: 'sakura' },
+  { key: 'sweet', title: 'Nivel de dulzor', jp: '甘さ', accent: 'sakura' },
+  { key: 'extras', title: 'Extras', jp: 'トッピング', accent: 'sakura' },
   { key: 'delivery', title: '¿Cómo lo quieres?', jp: 'お届け', accent: 'sakura' },
-  { key: 'review', title: 'Revisa tu pedido', jp: 'ご注文', accent: 'gold' },
+  { key: 'review', title: 'Revisa tu pedido', jp: 'ご注文', accent: 'sakura' },
 ]
 
 function OptionCard({
