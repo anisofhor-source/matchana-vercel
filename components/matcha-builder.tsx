@@ -391,15 +391,25 @@ export function MatchaBuilder() {
     <div className="overflow-hidden rounded-3xl border border-border bg-card shadow-sm">
       {/* Progress header */}
       <div className={`relative ${accent.soft} px-6 pt-6 pb-5 transition-colors duration-300`}>
+        {/* Custom background image */}
         <Image
-          src="/images/sakura-branch.png"
+          src="/images/header-sakura.webp"
           alt=""
           aria-hidden="true"
-          width={120}
-          height={120}
-          className="pointer-events-none absolute -right-2 -top-3 h-24 w-24 opacity-40 mix-blend-multiply"
+          fill
+          priority
+          sizes="(max-width: 768px) 100vw, 768px"
+          className="pointer-events-none object-cover"
         />
-        <div className="flex items-center gap-3">
+        {/* Readability overlay (pink/white veil) */}
+        <div
+          className="pointer-events-none absolute inset-0"
+          style={{
+            background:
+              'linear-gradient(180deg, oklch(0.97 0.02 350 / 0.8) 0%, oklch(0.94 0.035 350 / 0.84) 100%)',
+          }}
+        />
+        <div className="relative z-10 flex items-center gap-3">
           <span
             className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-full px-1 text-center font-serif text-[11px] leading-[1.1] ${accent.badge}`}
           >
@@ -420,7 +430,7 @@ export function MatchaBuilder() {
         </div>
 
         {/* Continuous progress bar */}
-        <div className="mt-4 h-2 w-full overflow-hidden rounded-full bg-border/60">
+        <div className="relative z-10 mt-4 h-2 w-full overflow-hidden rounded-full bg-border/60">
           <div
             className={`h-full rounded-full ${accent.bar} transition-all duration-500 ease-out`}
             style={{ width: `${progress}%` }}
