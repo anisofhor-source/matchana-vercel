@@ -6,8 +6,7 @@ export default function Page() {
     <main className="min-h-screen bg-background">
       <MenuHero />
 
-      <section id="crea-tu-matcha" className="bg-[#EEF4EE]">
-        <div className="mx-auto max-w-3xl px-6 py-16">
+      <section id="crea-tu-matcha" className="mx-auto max-w-3xl px-6 py-16">
         <div className="mb-10 text-center">
           <p className="font-serif text-sm tracking-[0.3em] text-primary">
             抹茶を作ろう
@@ -21,7 +20,6 @@ export default function Page() {
           </p>
         </div>
         <MatchaBuilder />
-        </div>
       </section>
 
       <footer className="border-t border-border py-10 text-center">
