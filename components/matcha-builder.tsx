@@ -84,6 +84,32 @@ const steps: StepMeta[] = [
   { key: 'review', title: 'Revisa tu pedido', jp: 'ご注文', accent: 'sakura', emoji: '🧾' },
 ]
 
+type Drink = {
+  baseId: string
+  sizeId: string
+  milkId: string
+  foamId: string
+  sweetId: string
+  extras: string[]
+}
+
+function drinkSubtotal(d: Drink) {
+  const b = bases.find((x) => x.id === d.baseId)!
+  const s = sizes.find((x) => x.id === d.sizeId)!
+  const m = milks.find((x) => x.id === d.milkId)!
+  const f = foams.find((x) => x.id === d.foamId)!
+  const ex = extras.filter((e) => d.extras.includes(e.id))
+  return (
+    b.price + s.price + m.price + f.price + ex.reduce((sum, e) => sum + e.price, 0)
+  )
+}
+
+function describeDrink(d: Drink) {
+  const b = bases.find((x) => x.id === d.baseId)!
+  const s = sizes.find((x) => x.id === d.sizeId)!
+  return `${b.emoji ?? ''} ${b.label} · ${s.label}`.trim()
+}
+
 function OptionCard({
   option,
   selected,
@@ -155,6 +181,7 @@ export function MatchaBuilder() {
   const [orderStage, setOrderStage] = useState<'form' | 'preparing' | 'done'>(
     'form',
   )
+  const [cart, setCart] = useState<Drink[]>([])
 
   const toggleExtra = (id: string) =>
     setSelectedExtras((prev) =>
@@ -168,18 +195,22 @@ export function MatchaBuilder() {
   const sweet = sweetness.find((s) => s.id === sweetId)!
   const chosenExtras = extras.filter((e) => selectedExtras.includes(e.id))
 
-  const total = useMemo(() => {
-    const extrasTotal = chosenExtras.reduce((sum, e) => sum + e.price, 0)
-    const deliveryTotal = delivery === 'domicilio' ? DELIVERY_FEE : 0
-    return (
-      base.price +
-      size.price +
-      milk.price +
-      foam.price +
-      extrasTotal +
-      deliveryTotal
-    )
-  }, [base, size, milk, foam, chosenExtras, delivery])
+  const currentDrink: Drink = {
+    baseId,
+    sizeId,
+    milkId,
+    foamId,
+    sweetId,
+    extras: selectedExtras,
+  }
+  const cartSubtotal = cart.reduce((sum, d) => sum + drinkSubtotal(d), 0)
+  const currentSubtotal = drinkSubtotal(currentDrink)
+  const deliveryTotal = delivery === 'domicilio' ? DELIVERY_FEE : 0
+  const total = useMemo(
+    () => cartSubtotal + currentSubtotal + deliveryTotal,
+    [cartSubtotal, currentSubtotal, deliveryTotal],
+  )
+  const doneTotal = cartSubtotal + deliveryTotal
 
   const meta = steps[step]
   const accent = accentTheme[meta.accent]
@@ -192,6 +223,7 @@ export function MatchaBuilder() {
   const goNext = () => {
     if (isLast) {
       if (canOrder) {
+        setCart((prev) => [...prev, currentDrink])
         setOrderStage('preparing')
         window.setTimeout(() => setOrderStage('done'), 2200)
       }
@@ -201,9 +233,19 @@ export function MatchaBuilder() {
   }
   const goBack = () => setStep((s) => Math.max(s - 1, 0))
 
-  const pickAndAdvance = (setter: (v: string) => void, id: string) => {
-    setter(id)
-    window.setTimeout(() => setStep((s) => Math.min(s + 1, steps.length - 1)), 260)
+  const resetDrink = () => {
+    setBaseId(bases[0].id)
+    setSizeId(sizes[0].id)
+    setMilkId(milks[0].id)
+    setFoamId(foams[0].id)
+    setSweetId(sweetness[1].id)
+    setSelectedExtras([])
+  }
+
+  const addAnother = () => {
+    setCart((prev) => [...prev, currentDrink])
+    resetDrink()
+    setStep(0)
   }
 
   if (orderStage === 'preparing') {
@@ -259,15 +301,34 @@ export function MatchaBuilder() {
           Gracias por tu orden, {name}
         </h3>
         <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-muted-foreground">
-          Tu {base.label} ({size.label}) con {milk.label.toLowerCase()}
-          {foam.id !== 'ninguno' ? ` y ${foam.label.toLowerCase()}` : ''} está en
-          preparación.{' '}
+          {cart.length === 1
+            ? 'Tu matcha está en preparación.'
+            : `Tus ${cart.length} matchas están en preparación.`}{' '}
           {delivery === 'domicilio'
-            ? `Lo llevaremos a: ${address}.`
-            : 'Puedes recogerlo en Kaze en unos 15 minutos.'}
+            ? `Los llevaremos a: ${address}.`
+            : 'Puedes recogerlos en Kaze en unos 15 minutos.'}
         </p>
+
+        <div className="mx-auto mt-5 max-w-[360px] space-y-1.5 rounded-xl bg-secondary/50 p-4 text-left text-sm">
+          {cart.map((d, i) => (
+            <div key={i} className="flex items-center justify-between gap-2">
+              <span className="text-foreground">{describeDrink(d)}</span>
+              <span className="font-medium text-foreground">
+                ${drinkSubtotal(d)}
+              </span>
+            </div>
+          ))}
+          {delivery === 'domicilio' ? (
+            <div className="flex items-center justify-between gap-2">
+              <span className="text-foreground">🚲 Domicilio</span>
+              <span className="font-medium text-foreground">
+                +${DELIVERY_FEE}
+              </span>
+            </div>
+          ) : null}
+        </div>
         <p className="mt-4 text-lg font-semibold text-foreground">
-          Total: ${total}
+          Total: ${doneTotal}
         </p>
 
         <div className="mx-auto mt-8 max-w-[360px] border-t border-border pt-6 text-left">
@@ -315,10 +376,12 @@ export function MatchaBuilder() {
           onClick={() => {
             setOrderStage('form')
             setStep(0)
+            setCart([])
+            resetDrink()
           }}
           className="btn-hover-lift mt-2 rounded-full bg-matcha px-6 py-2.5 text-sm font-semibold text-matcha-foreground"
         >
-          Crear otro
+          Crear otra orden
         </button>
       </div>
     )
@@ -338,7 +401,7 @@ export function MatchaBuilder() {
         />
         <div className="flex items-center gap-3">
           <span
-            className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-full font-serif text-lg ${accent.badge}`}
+            className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-full px-1 text-center font-serif text-[11px] leading-[1.1] ${accent.badge}`}
           >
             {meta.jp}
           </span>
@@ -375,7 +438,7 @@ export function MatchaBuilder() {
                 option={b}
                 accent={meta.accent}
                 selected={baseId === b.id}
-                onSelect={() => pickAndAdvance(setBaseId, b.id)}
+                onSelect={() => setBaseId(b.id)}
               />
             ))}
           </div>
@@ -389,7 +452,7 @@ export function MatchaBuilder() {
                 option={s}
                 accent={meta.accent}
                 selected={sizeId === s.id}
-                onSelect={() => pickAndAdvance(setSizeId, s.id)}
+                onSelect={() => setSizeId(s.id)}
               />
             ))}
           </div>
@@ -403,7 +466,7 @@ export function MatchaBuilder() {
                 option={m}
                 accent={meta.accent}
                 selected={milkId === m.id}
-                onSelect={() => pickAndAdvance(setMilkId, m.id)}
+                onSelect={() => setMilkId(m.id)}
               />
             ))}
           </div>
@@ -417,7 +480,7 @@ export function MatchaBuilder() {
                 option={f}
                 accent={meta.accent}
                 selected={foamId === f.id}
-                onSelect={() => pickAndAdvance(setFoamId, f.id)}
+                onSelect={() => setFoamId(f.id)}
               />
             ))}
           </div>
@@ -429,7 +492,7 @@ export function MatchaBuilder() {
               <button
                 key={s.id}
                 type="button"
-                onClick={() => pickAndAdvance(setSweetId, s.id)}
+                onClick={() => setSweetId(s.id)}
                 aria-pressed={sweetId === s.id}
                 className={`flex items-center gap-1.5 rounded-full border-2 px-5 py-2.5 text-sm font-medium text-foreground transition-all hover:-translate-y-0.5 ${
                   sweetId === s.id ? accent.selected : accent.unselected
@@ -537,7 +600,40 @@ export function MatchaBuilder() {
 
         {meta.key === 'review' ? (
           <div className="space-y-4">
+            {cart.length > 0 ? (
+              <div className="rounded-xl border border-sakura/40 bg-sakura/10 p-4">
+                <p className="mb-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-sakura-foreground">
+                  🛒 Ya en tu orden ({cart.length})
+                </p>
+                <div className="space-y-1.5 text-sm">
+                  {cart.map((d, i) => (
+                    <div key={i} className="flex items-center justify-between gap-2">
+                      <span className="flex items-center gap-2 text-foreground">
+                        {describeDrink(d)}
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setCart((prev) => prev.filter((_, j) => j !== i))
+                          }
+                          aria-label="Quitar de la orden"
+                          className="text-xs text-muted-foreground transition-colors hover:text-destructive"
+                        >
+                          ✕
+                        </button>
+                      </span>
+                      <span className="font-medium text-foreground">
+                        ${drinkSubtotal(d)}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ) : null}
+
             <dl className="space-y-2 rounded-xl bg-secondary/50 p-4 text-sm">
+              <p className="mb-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+                Este matcha
+              </p>
               <Row label={base.label} value={`$${base.price}`} />
               <Row
                 label={`Tamaño ${size.label}`}
@@ -559,6 +655,15 @@ export function MatchaBuilder() {
                 value={delivery === 'domicilio' ? `+$${DELIVERY_FEE}` : 'Gratis'}
               />
             </dl>
+
+            <button
+              type="button"
+              onClick={addAnother}
+              className="btn-hover-lift flex w-full items-center justify-center gap-2 rounded-xl border-2 border-dashed border-sakura/60 bg-sakura/5 px-4 py-3 text-sm font-semibold text-sakura-foreground hover:bg-sakura/15"
+            >
+              ➕ Añadir otro matcha
+            </button>
+
             {!canOrder ? (
               <p className="rounded-lg bg-destructive/10 px-3 py-2 text-center text-xs text-destructive">
                 {name.trim().length === 0
